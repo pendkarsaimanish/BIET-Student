@@ -1,15 +1,19 @@
 class StudentModel {
   Id? iId;
   String? studentId;
-  String? password;
   StudentData? studentData;
 
-  StudentModel({this.iId, this.studentId, this.password, this.studentData});
+  StudentModel({this.iId, this.studentId, this.studentData});
 
   StudentModel.fromJson(Map<String, dynamic> json) {
-    iId = json['_id'] != null ? Id.fromJson(json['_id']) : null;
+    if (json['_id'] != null && json['_id'] is Map) {
+      // Handles the local file format: "_id": { "$oid": "..." }
+      iId = Id.fromJson(json['_id']);
+    } else if (json['soId'] != null && json['soId'] is String) {
+      // Handles the API response format: "soId": "..."
+      iId = Id(oid: json['soId']);
+    }
     studentId = json['studentId'];
-    password = json['password'];
     studentData = json['studentData'] != null
         ? StudentData.fromJson(json['studentData'])
         : null;
@@ -21,7 +25,6 @@ class StudentModel {
       data['_id'] = iId!.toJson();
     }
     data['studentId'] = studentId;
-    data['password'] = password;
     if (studentData != null) {
       data['studentData'] = studentData!.toJson();
     }
@@ -35,12 +38,12 @@ class Id {
   Id({this.oid});
 
   Id.fromJson(Map<String, dynamic> json) {
-    oid = json['$oid'];
+    oid = json['\$oid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['$oid'] = oid;
+    data['\$oid'] = oid;
     return data;
   }
 }

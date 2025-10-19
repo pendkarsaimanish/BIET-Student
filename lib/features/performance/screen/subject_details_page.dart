@@ -1,6 +1,5 @@
 import 'package:biet/features/auth/model/student_model.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class SubjectDetailsPage extends StatelessWidget {
   final Attendance subjectAttendance;
