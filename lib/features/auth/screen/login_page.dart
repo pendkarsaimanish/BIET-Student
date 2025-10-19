@@ -7,21 +7,14 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final studentIdController = TextEditingController();
-    final passwordController = TextEditingController();
-    final authProvider = context.read<AuthProvider>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: LoginElements(
-              authProvider: authProvider,
-              id: studentIdController,
-              pass: passwordController,
-            ),
+            // LoginElements now manages its own state and controllers.
+            child: LoginElements(),
           ),
         ),
       ),
@@ -30,22 +23,24 @@ class LoginPage extends StatelessWidget {
 }
 
 class LoginElements extends StatefulWidget {
-  const LoginElements({
-    super.key,
-    required this.authProvider,
-    required this.id,
-    required this.pass,
-  });
-  final TextEditingController id;
-  final TextEditingController pass;
-  final AuthProvider authProvider;
+  const LoginElements({super.key});
 
   @override
   State<LoginElements> createState() => _LoginElementsState();
 }
 
 class _LoginElementsState extends State<LoginElements> {
+  final _studentIdController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isPasswordObscured = true;
+
+  @override
+  void dispose() {
+    // Dispose controllers to prevent memory leaks.
+    _studentIdController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +90,7 @@ class _LoginElementsState extends State<LoginElements> {
 
         // Student ID TextField
         TextField(
-          controller: widget.id,
+          controller: _studentIdController,
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
             hintText: 'Enter student id',
@@ -131,7 +126,7 @@ class _LoginElementsState extends State<LoginElements> {
 
         // Password TextField
         TextField(
-          controller: widget.pass,
+          controller: _passwordController,
           obscureText: _isPasswordObscured,
           decoration: InputDecoration(
             hintText: 'Enter password',
@@ -168,8 +163,8 @@ class _LoginElementsState extends State<LoginElements> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () async {
-              final studentId = widget.id.text.trim();
-              final password = widget.pass.text.trim();
+              final studentId = _studentIdController.text.trim();
+              final password = _passwordController.text.trim();
 
               if (studentId.isEmpty || password.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -180,10 +175,10 @@ class _LoginElementsState extends State<LoginElements> {
                 return;
               }
 
-              final bool success = await widget.authProvider.loginStudent(
-                studentId: studentId,
-                password: password,
-              );
+              // Read the provider here, only when needed.
+              final bool success = await context
+                  .read<AuthProvider>()
+                  .loginStudent(studentId: studentId, password: password);
 
               // Show a snackbar if login fails
               if (!success && context.mounted) {

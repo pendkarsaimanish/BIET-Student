@@ -26,8 +26,27 @@ class ProfilePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Call the logout method from the provider
-              context.read<AuthProvider>().logout();
+              // Show a confirmation dialog before logging out.
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to log out?'),
+                  actions: [
+                    TextButton(
+                      child: const Text('No'),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                    TextButton(
+                      child: const Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop(); // Close the dialog
+                        context.read<AuthProvider>().logout();
+                      },
+                    ),
+                  ],
+                ),
+              );
             },
           ),
         ],

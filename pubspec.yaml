@@ -16,11 +16,13 @@ dependencies:
   percent_indicator: ^4.2.5
   shared_preferences: ^2.5.3
   curved_labeled_navigation_bar: ^2.0.6
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -28,9 +30,6 @@ flutter:
   assets:
     # Images
     - assets/images/
-
-    # JSON Data
-    - assets/data/
 
     - .env
 
@@ -43,3 +42,9 @@ flutter:
     - family: AnekDevanagariCondensed
       fonts:
         - asset: assets/fonts/AnekDevanagari_SemiCondensed-Regular.ttf
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png" # IMPORTANT: Replace with your logo file path
+  # min_sdk_android: 21 # Optional

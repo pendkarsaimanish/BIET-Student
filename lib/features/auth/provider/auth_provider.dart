@@ -55,6 +55,43 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Refreshes the current user's data from the server.
+  Future<void> refreshStudentData() async {
+    // Only refresh if a user is already logged in.
+    if (_user == null || _user!.studentId == null) {
+      return;
+    }
+
+    try {
+      // We need a way to get the password. For now, we assume a refresh endpoint
+      // might exist that uses a token, or we re-use the login.
+      // This example re-uses login, which is not ideal but works for now.
+      // A better approach would be an endpoint that takes the studentId and returns fresh data.
+      final response = await http.post(
+        Uri.parse(ApiEndpoints.loginUrl),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "studentId": _user!.studentId,
+          "password": "webcap",
+        }), // NOTE: Password is hardcoded here.
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        final studentData = StudentModel.fromJson(responseBody);
+        if (studentData.studentId != null &&
+            studentData.studentId!.isNotEmpty) {
+          _user = studentData;
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_userSessionKey, jsonEncode(responseBody));
+          notifyListeners(); // Update all listening widgets with new data.
+        }
+      }
+    } catch (e) {
+      print("Error refreshing student data: $e");
+    }
+  }
+
   Future<void> logout() async {
     _user = null;
     final prefs = await SharedPreferences.getInstance();

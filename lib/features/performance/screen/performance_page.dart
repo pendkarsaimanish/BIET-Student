@@ -19,7 +19,9 @@ class _PerformancePageState extends State<PerformancePage> {
     super.initState();
   }
 
-  Future<void> _refreshData() async {}
+  Future<void> _refreshData() async {
+    await context.read<AuthProvider>().refreshStudentData();
+  }
 
   @override
   Widget build(BuildContext context) {
