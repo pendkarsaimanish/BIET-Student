@@ -1,6 +1,6 @@
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
-import 'package:biet/features/attendace/screen/attendance_page.dart';
+import 'package:biet/features/performance/screen/performance_page.dart';
 import 'package:biet/features/community/screen/community_page.dart';
 import 'package:biet/features/results/screen/results_page.dart';
 import 'package:biet/features/auth/screen/profile_page.dart';
@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 
 final items = [
   CurvedNavigationBarItem(child: Icon(Icons.menu_book), label: "Results"),
-  CurvedNavigationBarItem(child: Icon(Icons.fingerprint), label: "Attendace"),
+  CurvedNavigationBarItem(
+    child: Icon(Icons.school_outlined),
+    label: "Performance",
+  ),
   CurvedNavigationBarItem(child: Icon(Icons.home), label: "Home"),
   CurvedNavigationBarItem(
     child: Icon(Icons.diversity_1_outlined),
@@ -30,7 +33,7 @@ class _MainPageState extends State<MainPage> {
 
   final screens = [
     ResultsPage(),
-    AttendancePage(),
+    PerformancePage(),
     HomePage(),
     CommunityPage(),
     ProfilePage(),
@@ -39,7 +42,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      // extendBody: true,
       body: screens[index],
       bottomNavigationBar: CurvedNavigationBar(
         animationDuration: Duration(milliseconds: 200),

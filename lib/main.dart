@@ -1,8 +1,17 @@
+import 'package:biet/features/auth/provider/auth_provider.dart';
 import 'package:biet/features/main/screen/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthProvider()..loadStudent(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

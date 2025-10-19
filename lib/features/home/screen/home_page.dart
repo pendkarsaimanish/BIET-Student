@@ -72,8 +72,9 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 children: [
-                  ColoredBox(
-                    color: Colors.white,
+                  // Main Attendance Showcase Card
+                  Card(
+                    elevation: 2,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: SizedBox(
@@ -133,3 +134,99 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+class QuickLink extends StatelessWidget {
+  final String title;
+  final String imagePath;
+  final double? imageHeight;
+  final void Function()? onTap;
+
+  const QuickLink({
+    super.key,
+    required this.title,
+    required this.imagePath,
+    this.imageHeight = 90,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      enableFeedback: true,
+      onTap: onTap,
+      child: ColoredBox(
+        color: Colors.white,
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+            child: Column(
+              children: [
+                Image(
+                  image: AssetImage(imagePath),
+                  height: imageHeight,
+                  alignment: Alignment.center,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 4),
+                FittedBox(
+                  child: Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+                  // ColoredBox(
+                  //   color: Colors.white,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(16.0),
+                  //     child: Column(
+                  //       children: [
+                  //         Text(
+                  //           "Quick Links",
+                  //           style: TextStyle(
+                  //             fontWeight: FontWeight.bold,
+                  //             fontSize: 20,
+                  //           ),
+                  //         ),
+                  //         SizedBox(height: 8),
+
+                  //         Row(
+                  //           children: [
+                  //             QuickLink(
+                  //               title: "Attendance Report",
+                  //               imagePath: 'assets/images/progress.png',
+                  //               onTap: () => print("Pressed 1"),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           children: [
+                  //             QuickLink(
+                  //               title: "Performance",
+                  //               imagePath: 'assets/images/organizing_data.png',
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           children: [
+                  //             QuickLink(
+                  //               title: "Attendance Report",
+                  //               imagePath: 'assets/images/report.png',
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
