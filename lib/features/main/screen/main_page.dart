@@ -1,3 +1,4 @@
+import 'package:biet/features/main/provider/navigation_provider.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:biet/features/performance/screen/performance_page.dart';
@@ -6,6 +7,7 @@ import 'package:biet/features/results/screen/results_page.dart';
 import 'package:biet/features/auth/screen/profile_page.dart';
 import 'package:biet/features/home/screen/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final items = [
   CurvedNavigationBarItem(child: Icon(Icons.menu_book), label: "Results"),
@@ -29,8 +31,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int index = 2;
-
   final screens = [
     ResultsPage(),
     PerformancePage(),
@@ -41,18 +41,17 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final navProvider = context.watch<NavigationProvider>();
     return Scaffold(
       // extendBody: true,
-      body: screens[index],
+      body: screens[navProvider.index],
       bottomNavigationBar: CurvedNavigationBar(
         animationDuration: Duration(milliseconds: 200),
         backgroundColor: Colors.transparent,
         animationCurve: Curves.easeOut,
         buttonBackgroundColor: Colors.blue[100],
-        onTap: (index) => setState(() {
-          this.index = index;
-        }),
-        index: index,
+        onTap: (index) => context.read<NavigationProvider>().setIndex(index),
+        index: navProvider.index,
         items: items,
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:biet/features/auth/model/student_model.dart';
 import 'package:biet/features/auth/provider/auth_provider.dart';
+import 'package:biet/features/performance/screen/subject_details_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -17,12 +19,14 @@ class _PerformancePageState extends State<PerformancePage> {
     super.initState();
   }
 
+  Future<void> _refreshData() async {}
+
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final performance = authProvider.user?.studentData?.presentPerformance;
 
-    final total = performance?.attendance?.firstWhere(
+    final total = performance?.attendance?.firstWhereOrNull(
       (e) => e.subject == "TOTAL",
     );
 
@@ -32,28 +36,34 @@ class _PerformancePageState extends State<PerformancePage> {
 
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: ListView(
-          children: [
-            _totalSummaryCard(total),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ListView(
+            children: [
+              _totalSummaryCard(total),
 
-            SizedBox(height: 16),
+              SizedBox(height: 16),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                "Subject",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  "Subject",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
               ),
-            ),
 
-            ...?subjectAttendance?.map((sub) {
-              return _subjectSummaryCard(sub);
-            }),
+              ...?subjectAttendance?.map((sub) {
+                return _subjectSummaryCard(sub, performance);
+              }),
 
-            SizedBox(height: 40),
-          ],
+              // Exam totals
+              _examTotalsCard(performance?.internalMarks),
+
+              SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -99,13 +109,23 @@ class _PerformancePageState extends State<PerformancePage> {
     );
   }
 
-  Widget _subjectSummaryCard(Attendance sub) {
+  Widget _subjectSummaryCard(Attendance sub, PresentPerformance? performance) {
     return Card(
       elevation: 1,
       margin: EdgeInsets.only(bottom: 16),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SubjectDetailsPage(
+                subjectAttendance: sub,
+                internalMarks: performance?.internalMarks,
+              ),
+            ),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
           child: Row(
@@ -147,6 +167,51 @@ class _PerformancePageState extends State<PerformancePage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _examTotalsCard(List<InternalMarks>? internalMarks) {
+    if (internalMarks == null || internalMarks.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Card(
+      elevation: 1,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Exam Totals',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...internalMarks.map((exam) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      exam.exam ?? 'N/A',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      exam.total ?? '-',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );

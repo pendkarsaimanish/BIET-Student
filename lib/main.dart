@@ -1,5 +1,6 @@
 import 'package:biet/features/auth/provider/auth_provider.dart';
-import 'package:biet/features/main/screen/main_page.dart';
+import 'package:biet/features/main/provider/navigation_provider.dart';
+import 'package:biet/features/auth/screen/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,8 +8,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider()..loadStudent(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => NavigationProvider()),
+      ],
+
       child: const MyApp(),
     ),
   );
@@ -20,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MainPage(),
+      home: const AuthGate(),
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         fontFamily: "AnekDevanagari",

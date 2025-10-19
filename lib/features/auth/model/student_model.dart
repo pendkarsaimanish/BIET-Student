@@ -229,47 +229,23 @@ class InternalMarks {
 }
 
 class Marks {
-  String? pSI;
-  String? pA;
-  String? wSMA;
-  String? nLP;
-  String? cC;
-  String? eHC;
-  String? pALAB;
-  String? wSMALAB;
+  late Map<String, dynamic> _subjectMarks;
 
-  Marks({
-    this.pSI,
-    this.pA,
-    this.wSMA,
-    this.nLP,
-    this.cC,
-    this.eHC,
-    this.pALAB,
-    this.wSMALAB,
-  });
+  Marks({required Map<String, dynamic> subjectMarks})
+    : _subjectMarks = subjectMarks;
 
   Marks.fromJson(Map<String, dynamic> json) {
-    pSI = json['PS-I'];
-    pA = json['PA'];
-    wSMA = json['WSMA'];
-    nLP = json['NLP'];
-    cC = json['CC'];
-    eHC = json['EHC'];
-    pALAB = json['PA LAB'];
-    wSMALAB = json['WSMA LAB'];
+    _subjectMarks = Map<String, dynamic>.from(json);
+  }
+
+  /// Returns the mark for a given subject, e.g., "PA", "WSMA LAB".
+  /// Returns null if the subject is not found.
+  String? getMarkForSubject(String subjectKey) {
+    // Use toString() to handle different data types gracefully.
+    return _subjectMarks[subjectKey]?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['PS-I'] = pSI;
-    data['PA'] = pA;
-    data['WSMA'] = wSMA;
-    data['NLP'] = nLP;
-    data['CC'] = cC;
-    data['EHC'] = eHC;
-    data['PA LAB'] = pALAB;
-    data['WSMA LAB'] = wSMALAB;
-    return data;
+    return _subjectMarks;
   }
 }

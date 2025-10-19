@@ -1,4 +1,6 @@
 import 'package:biet/features/auth/provider/auth_provider.dart';
+import 'package:biet/features/main/provider/navigation_provider.dart';
+import 'package:provider/provider.dart';
 import '../../utility/capitalize_string_helper.dart' as helper;
 import 'package:biet/features/auth/model/student_model.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +10,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     return FutureBuilder<StudentModel>(
-      future: AuthProvider().loadStudent(),
+      future: Future.value(authProvider.user),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(appBar: AppBar(title: Text("Hello, ")));
@@ -75,39 +78,44 @@ class HomePage extends StatelessWidget {
                   // Main Attendance Showcase Card
                   Card(
                     elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              'assets/images/focused.png',
-                              height: 120,
-                            ),
+                    child: InkWell(
+                      onTap: () {
+                        context.read<NavigationProvider>().setIndex(1);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset(
+                                'assets/images/focused.png',
+                                height: 120,
+                              ),
 
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  totalPercentage,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 38,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    totalPercentage,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 38,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "Attendance",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18, // Feel free to adjust size
+                                  Text(
+                                    "Attendance",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18, // Feel free to adjust size
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
